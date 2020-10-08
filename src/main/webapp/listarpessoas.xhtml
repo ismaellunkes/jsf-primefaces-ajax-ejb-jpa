@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Lista de Pessoas</title>        
+    </h:head>
+    <h:body>
+        <p:ajaxStatus style="width: 16px; height: 16px;" id="ajaxStatusPanel">
+            <f:facet name="start">
+                <h:graphicImage library="images" name="ajaxloading.gif"/>
+            </f:facet>
+            <f:facet name="complete">
+                <h:outputText value=""/>
+            </f:facet>            
+        </p:ajaxStatus>
+        
+        <h:form id="pessoasListForm">
+            <p:growl id="messages" showDetail="true"/>
+            <p:messages/>
+            <p:dataTable id="pessoasDataTable" value="#{pessoaBean.pessoas}" var="pessoa" editable="true" rowKey="#{pessoa.idPessoa}"
+                         selection="#{pessoaBean.pessoaSelecionada}" selectionMode="single" >
+                <f:facet name="header">
+                    Lista de pessoas
+                </f:facet>
+                <p:column headerText="Id">
+                    <h:outputText value="#{pessoa.idPessoa}"/>                    
+                </p:column>                
+                <p:column headerText="Nome">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.nome}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{pessoa.nome}"/>
+                        </f:facet>                        
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Sobrenome">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.sobrenome}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{pessoa.sobrenome}"/>
+                        </f:facet>                        
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="E-mail">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.email}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{pessoa.email}"/>
+                        </f:facet>                        
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Telefone">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pessoa.telefone}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{pessoa.telefone}"/>
+                        </f:facet>                        
+                    </p:cellEditor>
+                </p:column>
+                
+                <f:facet name="footer">
+                    <p:commandButton value="voltar" action="index"/>
+                    <p:spacer height="5px"/>
+                    <p:commandButton value="Salvar" actionListener="#{pessoaBean.reiniciarPessoaSelecionada}"
+                                     update=":dialogForm" oncomplete="PF('pessoaDialog').show()"/>
+                </f:facet>
+                
+                <p:column headerText="Opcoes" style="width: 50px">
+                    <p:rowEditor/>
+                </p:column>
+                
+                <p:ajax event="rowEdit" listener="#{pessoaBean.editListener}"/>
+                
+            </p:dataTable>
+            
+            <p:contextMenu for="pessoasDataTable">
+                <p:menuitem value="Excluir" update="pessoasListForm:pessoasDataTable" icon="ui-icon-close"
+                            actionListener="#{pessoaBean.deletarPessoa}"/>
+            </p:contextMenu>
+            
+        </h:form>
+        
+        <p:dialog id="pessoaDlg" widgetVar="pessoaDialog" header="Salvar Pessoa" modal="true" showEffect="fade" hideEffect="fade"
+            resizable="false">
+            <h:form id="dialogForm">
+                <p:outputPanel id="pessoaDetail" style="text-align: center">
+                    <p:panelGrid id="display" columns="4" columnClasses="label, value">
+                        <h:outputText value="Nome"/>
+                        <h:inputText value="#{pessoaBean.pessoaSelecionada.nome}"/>
+                        
+                        <h:outputText value="Sobrenome"/>
+                        <h:inputText value="#{pessoaBean.pessoaSelecionada.sobrenome}"/>
+                        
+                        <h:outputText value="E-mail"/>
+                        <h:inputText value="#{pessoaBean.pessoaSelecionada.email}"/>
+                        
+                        <h:outputText value="Telefone"/>
+                        <h:inputText value="#{pessoaBean.pessoaSelecionada.telefone}"/>
+                        
+                        <f:facet name="footer">
+                            <p:commandButton value="Salvar" actionListener="#{pessoaBean.salvarPessoa}" 
+                                             update="display,:pessoasListForm:pessoasDataTable" oncomplete="PF('pessoaDialog').hide();"/>
+                        </f:facet>
+                        
+                    </p:panelGrid>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+        
+    </h:body>
+</html>
